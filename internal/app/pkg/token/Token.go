@@ -1,7 +1,6 @@
 package token
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -10,16 +9,19 @@ import (
 )
 
 type PayloadToken struct {
-	AuthId  int
-	Expired time.Time
+	AuthId int       `json:"auth_id"`
+	Exp    time.Time `json:"exp"`
 }
 
 const SecretKey = "HyVQNmB3SMjwYvL4Tqh90N7tD6ccoF8t"
 
 func GenerateToken(tok *PayloadToken) (string, error) {
-	tok.Expired = time.Now().Add(10 * 60 * time.Second)
+	expirationTime := time.Now().Add(10 * time.Minute)
+	tok.Exp = expirationTime
+
 	claims := jwt.MapClaims{
-		"payload": tok,
+		"auth_id": tok.AuthId,
+		"exp":     expirationTime.Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
@@ -34,12 +36,15 @@ func GenerateToken(tok *PayloadToken) (string, error) {
 func ValidateToken(tokString string) (*PayloadToken, error) {
 	tok, err := jwt.Parse(tokString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-
 		return []byte(SecretKey), nil
 	})
+
 	if err != nil {
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			return nil, errors.New("token has expired")
+		}
 		return nil, err
 	}
 
@@ -48,14 +53,14 @@ func ValidateToken(tokString string) (*PayloadToken, error) {
 		return nil, errors.New("unauthorized")
 	}
 
-	payload := claims["payload"]
-	var payloadToken = PayloadToken{}
-	payloadByte, _ := json.Marshal(payload)
-	err = json.Unmarshal(payloadByte, &payloadToken)
-	if err != nil {
-		return nil, err
+	payloadToken := PayloadToken{
+		AuthId: int(claims["auth_id"].(float64)), // Konversi float64 ke int
+		Exp:    time.Unix(int64(claims["exp"].(float64)), 0),
+	}
+
+	if time.Now().After(payloadToken.Exp) {
+		return nil, errors.New("token has expired")
 	}
 
 	return &payloadToken, nil
-
 }

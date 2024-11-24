@@ -14,6 +14,10 @@ func CreateTransaction(authHeader, merchantId string, amount float64) (*models.T
 	if err != nil {
 		return nil, err
 	}
+	err = utils.BackupFile()
+	if err != nil {
+		return nil, err
+	}
 	customer := repositories.FindById(id)
 	if customer == nil {
 		return nil, errors.New("customer not found")
@@ -33,9 +37,17 @@ func CreateTransaction(authHeader, merchantId string, amount float64) (*models.T
 		Amount:     amount,
 		Status:     "Success",
 	}
-	repositories.AddTransaction(transaction)
+	_, err = repositories.AddTransaction(transaction)
+	if err != nil {
+		_ = utils.RollbackFile()
+		return nil, err
+	}
 	customer.Balance = customer.Balance - amount
-	repositories.UpdateCustomer(*customer)
+	_, err = repositories.UpdateCustomer(*customer)
+	if err != nil {
+		_ = utils.RollbackFile()
+		return nil, err
+	}
 	return &transaction, nil
 }
 

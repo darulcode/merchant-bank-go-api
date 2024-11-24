@@ -13,7 +13,7 @@ func AuthUtil(authHeader string) (customerID int, err error) {
 	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 	payloadToken, err := token.ValidateToken(tokenString)
 	if err != nil {
-		return 0, errors.New("invalid token")
+		return 0, err
 	}
 	return payloadToken.AuthId, nil
 }
