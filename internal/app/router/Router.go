@@ -21,7 +21,7 @@ func SetupRouter() *gin.Engine {
 		c.Next()
 		duration := time.Since(start)
 		status := c.Writer.Status()
-		log.Printf("[Custom Log] Method: %s, Path: %s, Status: %d, Duration: %v\n", c.Request.Method, c.Request.URL.Path, status, duration)
+		log.Printf("[MERCHANT API] Method: %s, Path: %s, Status: %d, Duration: %v\n", c.Request.Method, c.Request.URL.Path, status, duration)
 	})
 
 	authController := &handler.AuthHandler{}

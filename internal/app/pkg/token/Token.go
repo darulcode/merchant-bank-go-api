@@ -53,8 +53,12 @@ func ValidateToken(tokString string) (*PayloadToken, error) {
 		return nil, errors.New("unauthorized")
 	}
 
+	if claims["auth_id"] == nil {
+		return nil, errors.New("unauthorized")
+	}
+
 	payloadToken := PayloadToken{
-		AuthId: int(claims["auth_id"].(float64)), // Konversi float64 ke int
+		AuthId: int(claims["auth_id"].(float64)),
 		Exp:    time.Unix(int64(claims["exp"].(float64)), 0),
 	}
 

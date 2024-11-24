@@ -1,0 +1,18 @@
+[
+  {
+    "id": "27496227-f067-47e7-b832-dc2c432e3e06",
+    "timestamp": "2024-11-24T22:51:57.706110996+07:00",
+    "customer_id": 1,
+    "merchant_id": "001WPS",
+    "amount": 50000,
+    "status": "Success"
+  },
+  {
+    "id": "a197f301-423a-4591-ad9f-5512c194ae8a",
+    "timestamp": "2024-11-25T00:15:14.290663823+07:00",
+    "customer_id": 1,
+    "merchant_id": "001WPS",
+    "amount": 50000,
+    "status": "Success"
+  }
+]

@@ -12,9 +12,23 @@ func GetAllTransactions() ([]models.Transaction, error) {
 	var transactions []models.Transaction
 	utils.ReadJson(filePathTransaction, &transactions)
 	if transactions == nil {
-		return nil, errors.New("No transactions found")
+		return nil, errors.New("no transactions found")
 	}
 	return transactions, nil
+}
+
+func GetAllTransactionByCustomerId(customerId int) ([]models.Transaction, error) {
+	var customerTransactions []models.Transaction
+	transactions, err := GetAllTransactions()
+	if err != nil {
+		return nil, err
+	}
+	for _, transaction := range transactions {
+		if transaction.CustomerID == customerId {
+			customerTransactions = append(customerTransactions, transaction)
+		}
+	}
+	return customerTransactions, nil
 }
 
 func AddTransaction(Transaction models.Transaction) (*models.Transaction, error) {

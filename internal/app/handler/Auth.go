@@ -40,7 +40,11 @@ func (a *AuthHandler) Logout(ctx *gin.Context) {
 	authHeader := ctx.GetHeader("Authorization")
 	_, err := services.Logout(authHeader)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Unauthorized",
+			"data":    "",
+		})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
