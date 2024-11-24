@@ -3,9 +3,14 @@ package utils
 import (
 	"encoding/json"
 	"os"
+	"sync"
 )
 
+var mutex sync.Mutex
+
 func ReadJson[T any](filePath string, v *T) error {
+	mutex.Lock()
+	defer mutex.Unlock()
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
@@ -20,6 +25,8 @@ func ReadJson[T any](filePath string, v *T) error {
 }
 
 func WriteJson[T any](filePath string, v T) error {
+	mutex.Lock()
+	defer mutex.Unlock()
 	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
 		return err
