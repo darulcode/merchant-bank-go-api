@@ -2,11 +2,22 @@ package repositories
 
 import (
 	"errors"
+	"github.com/joho/godotenv"
+	"log"
 	"mncTest/internal/app/models"
 	"mncTest/internal/utils"
+	"os"
 )
 
-const filePathMerchant = "/home/enigma/GolandProjects/mnc_test/data/merchant.json"
+var filePathMerchant string
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+	filePathMerchant = os.Getenv("PATH_FILE") + "merchant.json"
+}
 
 func GetAllMerchants() ([]models.Merchant, error) {
 	var merchants []models.Merchant

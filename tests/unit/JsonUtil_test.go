@@ -1,4 +1,4 @@
-package unit
+package token
 
 import (
 	"mncTest/internal/app/models"
@@ -28,14 +28,14 @@ func TestWriteJson(t *testing.T) {
 
 	customers := []models.Customer{
 		{
-			Id:       1,
+			Id:       "1",
 			Username: "darul",
 			Password: "123",
 			Balance:  50000,
 			IsLogin:  true,
 		},
 		{
-			Id:       2,
+			Id:       "2",
 			Username: "liza",
 			Password: "123",
 			Balance:  0,

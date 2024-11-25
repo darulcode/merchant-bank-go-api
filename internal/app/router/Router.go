@@ -31,6 +31,10 @@ func SetupRouter() *gin.Engine {
 		authRoutes.POST("/login", authController.Login)
 		authRoutes.POST("/logout", authController.Logout)
 	}
+	authRoutesRegister := router.Group("/register")
+	{
+		authRoutesRegister.POST("", authController.Register)
+	}
 
 	transactionRoutes := router.Group("/transaction")
 	{

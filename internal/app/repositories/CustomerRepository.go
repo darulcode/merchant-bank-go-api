@@ -24,7 +24,7 @@ func AddCustomer(newCustomer models.Customer) []models.Customer {
 	return allCustomers
 }
 
-func FindById(id int) *models.Customer {
+func FindById(id string) *models.Customer {
 	customers, _ := GetAllCustomers()
 	for _, customer := range customers {
 		if customer.Id == id {
@@ -64,7 +64,7 @@ func UpdateCustomer(customer models.Customer) (models.Customer, error) {
 	return customer, errors.New("customer not found")
 }
 
-func DeleteCustomer(id int) ([]models.Customer, bool) {
+func DeleteCustomer(id string) ([]models.Customer, bool) {
 	customers, _ := GetAllCustomers()
 	for i, customer := range customers {
 		if customer.Id == id {

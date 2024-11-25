@@ -9,19 +9,16 @@ import (
 )
 
 type PayloadToken struct {
-	AuthId int       `json:"auth_id"`
+	AuthId string    `json:"auth_id"`
 	Exp    time.Time `json:"exp"`
 }
 
 const SecretKey = "HyVQNmB3SMjwYvL4Tqh90N7tD6ccoF8t"
 
 func GenerateToken(tok *PayloadToken) (string, error) {
-	expirationTime := time.Now().Add(10 * time.Minute)
-	tok.Exp = expirationTime
-
 	claims := jwt.MapClaims{
 		"auth_id": tok.AuthId,
-		"exp":     expirationTime.Unix(),
+		"exp":     tok.Exp.Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
@@ -56,9 +53,13 @@ func ValidateToken(tokString string) (*PayloadToken, error) {
 	if claims["auth_id"] == nil {
 		return nil, errors.New("unauthorized")
 	}
+	authID, ok := claims["auth_id"].(string)
+	if !ok {
+		return nil, errors.New("unauthorized")
+	}
 
 	payloadToken := PayloadToken{
-		AuthId: int(claims["auth_id"].(float64)),
+		AuthId: authID,
 		Exp:    time.Unix(int64(claims["exp"].(float64)), 0),
 	}
 

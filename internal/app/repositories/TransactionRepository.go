@@ -2,12 +2,22 @@ package repositories
 
 import (
 	"errors"
+	"github.com/joho/godotenv"
+	"log"
 	"mncTest/internal/app/models"
 	"mncTest/internal/utils"
+	"os"
 )
 
-const filePathTransaction = "/home/enigma/GolandProjects/mnc_test/data/transaction.json"
+var filePathTransaction string
 
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+	filePathTransaction = os.Getenv("PATH_FILE") + "transaction.json"
+}
 func GetAllTransactions() ([]models.Transaction, error) {
 	var transactions []models.Transaction
 	utils.ReadJson(filePathTransaction, &transactions)
@@ -17,7 +27,7 @@ func GetAllTransactions() ([]models.Transaction, error) {
 	return transactions, nil
 }
 
-func GetAllTransactionByCustomerId(customerId int) ([]models.Transaction, error) {
+func GetAllTransactionByCustomerId(customerId string) ([]models.Transaction, error) {
 	var customerTransactions []models.Transaction
 	transactions, err := GetAllTransactions()
 	if err != nil {

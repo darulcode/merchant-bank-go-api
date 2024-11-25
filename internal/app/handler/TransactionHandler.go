@@ -32,7 +32,11 @@ func (a *TransactionHandler) CreateTransactions(ctx *gin.Context) {
 	}
 	transaction, err := services.CreateTransaction(authHeader, request.MerchantId, request.Amount)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, dto.CommonResponse{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
 		return
 	}
 	ctx.JSON(http.StatusCreated, dto.CommonResponse{
