@@ -22,7 +22,7 @@ This project implements a simple Backend API for managing merchant and bank inte
 
   All activities (login, payment, logout) are logged to a history JSON file.
 
-5. **Transaction Rollback Feature**
+5.**Transaction Rollback Feature**
 
    If an error or issue occurs during a payment process, the transaction can be rolled back. This feature ensures that if a transaction fails, changes made to customer data and transaction history are reverted to their original state, maintaining system consistency and preventing loss of data or unauthorized balances.
 
