@@ -155,7 +155,7 @@ pwd
 
 Copy and paste on .env file.
 ```shell
-PATH=PASTE IN HERE WHITOUT SPACE
+PATH_FILE=PASTE IN HERE WHITOUT SPACE
 ```
 
 run project using :
