@@ -1,15 +1,8 @@
 [
   {
-    "id": 1,
+    "id": "98ffdfe4-63d2-4da7-98e5-b6f8ec0d33a2",
     "username": "darul",
-    "password": "123",
-    "balance": 50000,
-    "is_login": true
-  },
-  {
-    "id": 2,
-    "username": "liza",
-    "password": "123",
+    "password": "$2a$10$aa8osgy4gg9/ra4Xlt.2IOcNCPcdL/lFUR0Xdp42atLemr1zXBDZW",
     "balance": 0,
     "is_login": true
   }
