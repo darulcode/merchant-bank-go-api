@@ -6,14 +6,14 @@ import (
 	"strings"
 )
 
-func AuthUtil(authHeader string) (customerID int, err error) {
+func AuthUtil(authHeader string) (customerID string, err error) {
 	if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
-		return 0, errors.New("invalid authorization header")
+		return "", errors.New("invalid authorization header")
 	}
 	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 	payloadToken, err := token.ValidateToken(tokenString)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	return payloadToken.AuthId, nil
 }

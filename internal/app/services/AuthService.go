@@ -2,34 +2,77 @@ package services
 
 import (
 	"errors"
+	"fmt"
+	"github.com/google/uuid"
+	"github.com/joho/godotenv"
+	"golang.org/x/crypto/bcrypt"
+	"log"
 	"mncTest/internal/app/models"
 	"mncTest/internal/app/repositories"
 	"mncTest/internal/utils"
+	"os"
 )
 
-func Login(username, password string) (*models.Customer, error) {
-	filePath := "/home/enigma/GolandProjects/mnc_test/data/customer.json"
+var filePathCustomer string
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+	filePathCustomer = os.Getenv("PATH_FILE") + "customer.json"
+}
+
+func RegisterService(username, password string) (*models.Customer, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal(err)
+	}
+	usernameResult := repositories.FindByUsername(username)
+	if usernameResult != nil {
+		return nil, errors.New(fmt.Sprintf("User with username %s already exists", username))
+	}
+
+	customer := models.Customer{
+		Id:       uuid.New().String(),
+		Username: username,
+		Password: string(hashedPassword),
+		Balance:  0,
+		IsLogin:  false,
+	}
+	repositories.AddCustomer(customer)
+	return &customer, nil
+}
+
+func LoginService(username, password string) (*models.Customer, error) {
 	var customers []models.Customer
-	err := utils.ReadJson(filePath, &customers)
+	err := utils.ReadJson(filePathCustomer, &customers)
 	if err != nil {
 		return nil, errors.New("Bad file json")
 	}
 
-	customer := repositories.FindByUsernameAndPassword(username, password)
-	if customer == nil {
-		return nil, errors.New("username or password error")
+	customerResult := repositories.FindByUsername(username)
+	err = bcrypt.CompareHashAndPassword([]byte(customerResult.Password), []byte(password))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			return nil, errors.New("invalid Credential")
+		} else {
+			return nil, err
+		}
+	} else {
+		fmt.Println("Login successful!")
 	}
 
-	customer.IsLogin = true
-	updateCustomer, err := repositories.UpdateCustomer(*customer)
+	customerResult.IsLogin = true
+	updateCustomer, err := repositories.UpdateCustomer(*customerResult)
 	if err != nil {
-		return nil, errors.New("Failed to write to JSON file")
+		return nil, errors.New("something went wrong")
 	}
 
 	return &updateCustomer, nil
 }
 
-func Logout(authHeader string) (*models.Customer, error) {
+func LogoutService(authHeader string) (*models.Customer, error) {
 	id, err := utils.AuthUtil(authHeader)
 	if err != nil {
 		return nil, err
