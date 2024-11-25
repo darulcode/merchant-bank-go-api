@@ -3,7 +3,7 @@
     "id": 1,
     "username": "darul",
     "password": "123",
-    "balance": 100000,
+    "balance": 50000,
     "is_login": true
   },
   {
